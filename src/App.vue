@@ -1,30 +1,32 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="container">
+    <Nav />
+    <section class="col">
+      <router-view />
+    </section>
   </div>
-  <HelloWorld msg="Vite + Vue" />
+  <Modal v-if="modalState"/>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+<script setup>
+import axios from 'axios'
+import Nav from './components/Nav.vue'
+import Modal from './components/Modal.vue'
+import { useModalStore } from './store'
+import { storeToRefs } from 'pinia'
+
+const store = useModalStore()
+const { modalState } = storeToRefs(store)
+</script>
+
+<style>
+.container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+
+section {
+  padding: var(--space-lg);
 }
 </style>
