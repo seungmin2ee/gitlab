@@ -6,8 +6,9 @@
       <div class="tag-box">
         <div v-for="tag in selectTags" :key="tag.tag_id" class="tag"># {{ tag.desc }}</div>
       </div>
-      <div class="lists">
-        <List v-for="list in lists" :key="list.todo_id" :list="list.desc" :id="parseInt(list.todo_id)" :tagId="parseInt(list.tag_id)" :done="list.done" :btnState="true"/>
+      <div ref="root" class="lists">
+        <List v-for="list in lists" :key="list.id" :list="list.desc" :id="parseInt(list.id)" :tagId="parseInt(list.tag.id)" :done="list.done" :btnState="true"/>
+        <InfiniteLoading @infinite="loadTodoData" :target="root" />
       </div>
     </div>
     <div>
@@ -22,12 +23,13 @@
 </template>
 
 <script setup>
+import InfiniteLoading from 'v3-infinite-loading'
 import axios from 'axios'
 import { storeToRefs } from 'pinia'
-import { ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useListStore, useTagStore, useModalStore } from '../store'
 import List from './List.vue'
-
+import Observer from './Observer.vue'
 
 const store = useListStore()
 const tagStore = useTagStore()
@@ -40,18 +42,42 @@ const { tags } = storeToRefs(tagStore)
 
 console.log(lists)
 
+const root = ref(null)
+const target = ref(null)
+const observer = ref(null)
 const inputValue = ref('')
 const selectTags = ref([])
 
-const getTodoData = async () => {
+let page = 1
+const loadTodoData = async ($state) => {
   try{
-    const { data } = await axios.post('todo/list')
+    const { data } = await axios.post('todo/list', {limit: 10, page: page})
 
     setList(data.contents)
+    
+    if(data.total < 10) {
+      $state.complete()
+    } else {
+      $state.loaded()
+    }
+    
+    page++
   } catch(error) {
-    console.log(error)
+    $state.error()
   }
 }
+
+// const getTodoData = async () => {
+//   try{
+//     const { data } = await axios.post('todo/list', {limit: 10, page})
+
+//     setList(data.contents)
+
+//     page++
+//   } catch(error) {
+//     console.log(error)
+//   }
+// }
 
 const getTagData = async () => {
   try{
@@ -63,17 +89,18 @@ const getTagData = async () => {
   }
 }
 
-getTodoData()
 getTagData()
 
-const handleAddList = () => {
+const handleAddList = async () => {
   if(!inputValue.value) return
 
-  addList({
+  await addList({
     desc: inputValue.value,
-    tag: parseInt(selectTags.value[0].tag_id),
+    tag: parseInt(selectTags.value[0]?.tag_id),
     done: false
   })
+
+  // await getTodoData()
   
   inputValue.value = ''
   selectTags.value = []
@@ -115,9 +142,10 @@ input {
   display: flex;
   flex-direction: column;
   width: 400px;
-  height: 100%;
+  height: 600px;
   margin-top: 30px;
   gap: var(--space-sm);
+  overflow-y: auto;
 }
 
 .tags {
@@ -146,5 +174,10 @@ input {
   background-color: rgba(82, 82, 82, .3);
   color: #fff;
   border-color: #fff;
+}
+
+.target {
+  width: 100%;
+  height: 200px;
 }
 </style>

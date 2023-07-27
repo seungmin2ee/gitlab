@@ -13,7 +13,7 @@ export const useTagStore = defineStore('tag', () => {
     try {
       await axios.post('tag/save', payload)
 
-      tags.value = [...tags.value, payload]
+      tags.value = [payload, ...tags.value]
     } catch (error) {
       console.log(error)
     }
@@ -25,8 +25,9 @@ export const useTagStore = defineStore('tag', () => {
 
       tags.value = tags.value.filter((el) => el.tag_id !== id)
     } catch (error) {
-      alert('Todo와 연결된 태그는 삭제할 수 없습니다.')
-      console.log(error)
+      if (error.response.data.message === `ERROR: tag id ${id} has todo`) {
+        alert('Todo와 연결된 태그는 삭제할 수 없습니다.')
+      }
     }
   }
 
@@ -37,14 +38,14 @@ export const useListStore = defineStore('list', () => {
   const lists = ref([])
 
   function setList(data) {
-    lists.value = [...data]
+    lists.value = [...lists.value, ...data]
   }
 
   async function addList(payload) {
     try {
       await axios.post('todo/save', payload)
 
-      lists.value = [...lists.value, payload]
+      // lists.value = [payload, ...lists.value]
     } catch (error) {
       console.log(error)
     }
@@ -54,13 +55,27 @@ export const useListStore = defineStore('list', () => {
     try {
       await axios.delete(`todo/delete/${id}`)
 
-      lists.value = lists.value.filter((el) => el.todo_id !== id)
+      lists.value = lists.value.filter((el) => el.id !== id)
     } catch (error) {
       console.log(error)
     }
   }
 
-  return { lists, setList, addList, removeList }
+  async function editDoneStatus(payload) {
+    try {
+      await axios.post('todo/save', payload)
+
+      lists.value.forEach((el) => {
+        if (el.id === payload.id) {
+          el.done = !el.done
+        }
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  return { lists, setList, addList, removeList, editDoneStatus }
 })
 
 export const useModalStore = defineStore('params', () => {

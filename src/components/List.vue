@@ -28,24 +28,22 @@ const props = defineProps({
 })
 
 const store = useListStore()
-const { addList, removeList } = store
+const { removeList, editDoneStatus } = store
 const { lists } = storeToRefs(store)
 const tagStore = useTagStore()
 const { tags } = storeToRefs(tagStore)
 
 const handleClickDone = (id) => {
-  lists.value.forEach(el => {
-    if (el.todo_id === id) {
-      el.done = !el.done
-    }
-  })
-  // const doneList = lists.value.filter(el => el.todo_id === id)[0]
+  const doneList = lists.value.filter(el => el.id === id)[0]
 
-  // doneList.done = true
-
-  // console.log(doneList)
-
-  // addList(doneList)
+  const payload = {
+    id,
+    desc: doneList.desc,
+    done: !doneList.done,
+    tag: doneList.tag.id
+  }
+  
+  editDoneStatus(payload)
 }
 
 const handleRemoveList = (id) => {
