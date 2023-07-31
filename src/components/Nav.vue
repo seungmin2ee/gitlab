@@ -12,7 +12,8 @@
 
 <style scoped>
 nav {
-  border-right: 1px solid #ddd;
+  border-right: 1px solid #eee;
+  box-shadow: -5px 0 20px 0px rgba(0, 0, 0, .1);
 }
 nav > a {
   padding: var(--space-md);
@@ -20,6 +21,8 @@ nav > a {
   text-align: center;
 }
 .active {
-  background-color: rgba(35, 176, 255, .7);
+  background-color: #2B45D9;
+  color: #fafafa;
+  font-weight: bold;
 }
 </style>

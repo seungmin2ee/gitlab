@@ -44,8 +44,9 @@ export const useListStore = defineStore('list', () => {
   async function addList(payload) {
     try {
       await axios.post('todo/save', payload)
+      // const { data } = await axios.post('todo/list', { limit: 10, page: 1 })
 
-      // lists.value = [payload, ...lists.value]
+      // lists.value = data.contents
     } catch (error) {
       console.log(error)
     }

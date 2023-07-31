@@ -4,7 +4,7 @@
       <div>Archive</div>
       <div>
         <div class="lists">
-          <List v-for="list in archiveList" :key="list.todo_id" :list="list.desc" :id="parseInt(list.todo_id)" :tagId="parseInt(list.tag_id)" :btnState="false"/>
+          <List v-for="list in archiveList" :key="list.todo_id" :list="list.desc" :id="list.todo_id" :tagId="parseInt(list.tag_id)" :btnState="false"/>
         </div>
       </div>
     </div>
@@ -54,11 +54,11 @@ const handleCloseModal = () => {
 }
 .modal {
   width: 600px;
-  background-color: #fff;
+  background-color: #fafafa;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0px 1px 10px rgba(0, 0, 0, .3);
-  color: #525252;
+  color: #333;
   overflow: hidden;
 }
 .modal > div:first-child {

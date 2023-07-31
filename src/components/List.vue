@@ -56,14 +56,14 @@ const handleRemoveList = (id) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-md) var(--space-sm);
   gap: var(--space-sm);
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #ddd;
 }
 
 .list .done-btn {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   background-color: #eee;
   border: 1px solid #ddd;
   border-radius: 50%;
@@ -71,7 +71,8 @@ const handleRemoveList = (id) => {
 }
 
 .list.done .done-btn {
-  background-color: #3f75e1;
+  box-shadow:  0px 0px 10px rgba(157, 157, 157, .5);
+  background-color: #2B45D9;
 }
 
 .list .list-title {
@@ -86,17 +87,18 @@ const handleRemoveList = (id) => {
 }
 
 .list .remove-btn {
-  width: 20px;
-  height: 20px;
-  background: #23B0FF;
+  width: 18px;
+  height: 18px;
+  background: #4158D9;
   border-radius: 50%;
-  color: #fff;
+  color: #fafafa;
+  line-height: 1;
   cursor: pointer;
 }
 
 .list-tag {
   padding: 0 var(--space-sm);
-  color: #23B0FF;
+  color: #2B45D9;
   font-size: 14px;
 }
 </style>

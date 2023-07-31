@@ -1,10 +1,11 @@
 <template>
-  <div class="col row">
+  <div class="col column">
     <div class="chart"></div>
   </div>
 </template>
 
 <script setup>
+import { links } from '../assets/data.js'
 import axios from 'axios'
 import * as echarts from 'echarts'
 import { onMounted, ref } from 'vue'
@@ -15,6 +16,8 @@ const getLinkData = async () => {
   const { data } = await axios('node/link')
 
   linkData.value = data.contents
+
+  // linkData.value = links
 
   console.log(linkData.value)
 }
@@ -32,21 +35,25 @@ const renderChart = () => {
   linkData.value.forEach((nodeItem) => {
     if (nodeItem.tagId !== null) {
       node.push({
-        id: nodeItem.tagId + '',
+        id: `${nodeItem.tagId}`,
         desc: nodeItem.tagDesc,
+        type: 'tag'
       })
-      
-      nodeItem.todos.forEach((todoItem) => {
+    }
+  
+    nodeItem.todos.forEach((todoItem) => {
+      if (todoItem.id !== null && todoItem.desc !== null) {
         node.push({
           id: `todo-${todoItem.id}`,
           desc: todoItem.desc,
+          type: 'todo'
         })
         nodeChild.push({
           source: `todo-${todoItem.id}`,
-          target: nodeItem.tagId + '',
+          target: `${nodeItem.tagId}`,
         })       
-      })
-    }
+      }
+    })
   })
 
   const option = {
@@ -56,25 +63,29 @@ const renderChart = () => {
         layout: 'force',
         animation: false,
         force: {
-          repulsion: 10,
-          edgeLength: 10,
+          repulsion: 20,
+          edgeLength: 20,
+          gravity: 0.12
         },
         data: node.map(function (item) {
           return {
-            x: Math.random() * 100,
-            y: Math.random() * 100,
+            x: Math.random() * 200,
+            y: Math.random() * 200,
             id: item.id,
             name: item.desc,
-            symbolSize: 80,
+            symbolSize: item.type === 'tag' ? 100 : 80,
             itemStyle: {
-              color: '#' + Math.round(Math.random() * 0xffffff).toString(16),
-            }
+              color: item.type === 'tag' ? '#4158D9' : '#A7B2F2',
+            },
           }
         }),
         links: nodeChild,
         label: {
           show: true,
           fontSize: 14,
+          fontFamily: 'Pretendard-Regular',
+          width: 100,
+          overflow: "truncate",
         },
       }
     ]
@@ -92,6 +103,6 @@ onMounted(async () => {
 <style scoped>
 .chart {
   width: 100%;
-  height: 100vh;
+  height: calc( 100vh - 64px);
 }
 </style>

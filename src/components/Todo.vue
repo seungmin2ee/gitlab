@@ -7,14 +7,14 @@
         <div v-for="tag in selectTags" :key="tag.tag_id" class="tag"># {{ tag.desc }}</div>
       </div>
       <div ref="root" class="lists">
-        <List v-for="list in lists" :key="list.id" :list="list.desc" :id="parseInt(list.id)" :tagId="parseInt(list.tag.id)" :done="list.done" :btnState="true"/>
+        <List v-for="list in lists" :key="list.id" :list="list.desc" :id="list.id" :tagId="list.tag.id" :done="list.done" :btnState="true"/>
         <InfiniteLoading @infinite="loadTodoData" :target="root" />
       </div>
     </div>
     <div>
-      <div>할일에 추가할 태그를 아래에서 선택해주세요.</div>
+      <div>할일에 추가할 태그를 아래에서 선택해주세요. (1개 선택)</div>
       <div class="tags">
-        <div class="tag" v-for="tag in tags" :key="tag.tag_id" @click="handleSelectTag(tag)">
+        <div class="tag" :class="{active: selectTags[0]?.tag_id === tag.tag_id}" v-for="tag in tags" :key="tag.tag_id" @click="handleSelectTag(tag)">
           <div># {{ tag.desc }}</div>
         </div>
       </div>
@@ -26,10 +26,9 @@
 import InfiniteLoading from 'v3-infinite-loading'
 import axios from 'axios'
 import { storeToRefs } from 'pinia'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { ref } from 'vue'
 import { useListStore, useTagStore, useModalStore } from '../store'
 import List from './List.vue'
-import Observer from './Observer.vue'
 
 const store = useListStore()
 const tagStore = useTagStore()
@@ -43,8 +42,6 @@ const { tags } = storeToRefs(tagStore)
 console.log(lists)
 
 const root = ref(null)
-const target = ref(null)
-const observer = ref(null)
 const inputValue = ref('')
 const selectTags = ref([])
 
@@ -68,10 +65,12 @@ const loadTodoData = async ($state) => {
 }
 
 // const getTodoData = async () => {
-//   try{
-//     const { data } = await axios.post('todo/list', {limit: 10, page})
+//   page = 1
 
-//     setList(data.contents)
+//   try{
+//     const { data } = await axios('todo/list', {limit: 10, page: page})
+
+//     setList(data.results)
 
 //     page++
 //   } catch(error) {
@@ -88,7 +87,6 @@ const getTagData = async () => {
     console.log(error)
   }
 }
-
 getTagData()
 
 const handleAddList = async () => {
@@ -96,23 +94,23 @@ const handleAddList = async () => {
 
   await addList({
     desc: inputValue.value,
-    tag: parseInt(selectTags.value[0]?.tag_id),
+    tag: selectTags.value[0]?.tag_id,
     done: false
   })
 
-  // await getTodoData()
-  
   inputValue.value = ''
-  selectTags.value = []
+  selectTags.value.pop()
+  lists.value = []
+  page = 1
 }
 
 const handleSelectTag = (tag) => {
-  if (selectTags.value.length === 1 ) {
-    alert('태그는 1개만 선택할 수 있습니다.')
-    return
+  if (selectTags.value[0]?.tag_id === tag.tag_id) {
+    selectTags.value.pop()
+  } else {
+    selectTags.value.pop()
+    selectTags.value.push(tag)
   }
-
-  selectTags.value.push(tag)
 }
 </script>
 
@@ -124,33 +122,46 @@ const handleSelectTag = (tag) => {
 }
 
 input {
-  width: 400px;
+  width: 500px;
   padding: var(--space-md);
-  border: 1px solid #aaa;
+  background-color: #fafafa;
+  border: 1px solid #ccc;
   outline: none;
 }
 
+input:focus {
+  box-shadow: 0px 0px 5px 3px rgba(43, 69, 217, 0.3);
+  border-color: #A7B2F2;
+  transition: .2s ease-in-out;
+}
+
 .tag-box {
-  width: 400px;
+  width: 500px;
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-sm);
   margin-top: var(--space-md);
 }
+.tag-box > div {
+  background-color: #2B45D9;
+  color: #fafafa;
+}
 
 .lists {
   display: flex;
   flex-direction: column;
-  width: 400px;
+  width: 500px;
   height: 600px;
   margin-top: 30px;
+  padding: 10px;
   gap: var(--space-sm);
   overflow-y: auto;
 }
 
 .tags {
-  display: grid;
-  grid-template-columns: repeat(5, auto);
+  width: 600px;
+  display: flex;
+  flex-wrap: wrap;
   gap: var(--space-sm);
   margin-top: var(--space-md);
 }
@@ -159,21 +170,26 @@ input {
   cursor: pointer;
 }
 
+.tag.active {
+  background-color: #2B45D9;
+  color: #fafafa;
+}
+
 .archive-btn {
   margin-bottom: var(--space-md);
   padding: var(--space-md) var(--space-lg);
-  background-color: #fff;
-  border: 1px solid #525252;
+  background-color: #fafafa;
+  border: 1px solid #2B45D9;
   border-radius: 10px;
-  color: #525252;
-  box-shadow: 0 1px 10px rgba(0, 0, 0, .1);
+  color: #2B45D9;
   cursor: pointer;
-  transition: .1s ease-in-out;
+  transition: .2s ease-in-out;
 }
 .archive-btn:hover {
-  background-color: rgba(82, 82, 82, .3);
+  box-shadow: 0 1px 10px rgba(0, 0, 0, .3);
+  background-color: #4158D9;
   color: #fff;
-  border-color: #fff;
+  /* border-color: #fff; */
 }
 
 .target {
