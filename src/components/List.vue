@@ -3,8 +3,9 @@
     <button class="done-btn" @click="handleClickDone(id)"></button>
     <div class="col column gap-xs">
       <div class="list-title">{{ list }}</div>
-      <div class="col row">
+      <div class="col row items-center gap-sm">
         <div class="list-tag" v-if="tagId"># {{ tags.filter(el => el.tag_id === tagId)[0]?.desc }}</div>
+        <div class="list-dt">{{ regDt }}</div>
       </div>
     </div>
     <button class="remove-btn" v-if="btnState" @click="handleRemoveList(id)">x</button>
@@ -16,7 +17,9 @@
 </template>
 
 <script setup>
+import * as dayjs from 'dayjs'
 import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
 import { useListStore, useTagStore } from '../store'
 
 const props = defineProps({
@@ -24,6 +27,7 @@ const props = defineProps({
   id: Number,
   tagId: Number,
   done: Boolean,
+  listDt: String,
   btnState: Boolean,
 })
 
@@ -32,6 +36,27 @@ const { removeList, editDoneStatus } = store
 const { lists } = storeToRefs(store)
 const tagStore = useTagStore()
 const { tags } = storeToRefs(tagStore)
+
+const regDt = computed(() => {
+  const date1 = dayjs(props.listDt)
+  const date2 = dayjs(new Date())
+  
+  const year = Math.abs(date1.diff(date2, 'year'))
+  const month = Math.abs(date1.diff(date2, 'month'))
+  const week = Math.abs(date1.diff(date2, 'week'))
+  const day =  Math.abs(date1.diff(date2, 'day'))
+  const hour =  Math.abs(date1.diff(date2, 'hour'))
+  const minute =  Math.abs(date1.diff(date2, 'minute'))
+  const second =  Math.abs(date1.diff(date2, 'second'))
+  
+  if(year) return `${year}년 전`
+  if(month) return `${month + 1}개월 전`
+  if(week) return `${week}주 전`
+  if(day) return `${day}일 전`
+  if(hour) return `${hour}시간 전`
+  if(minute) return `${minute}분 전`
+  if(second) return `${second}초 전`
+})
 
 const handleClickDone = (id) => {
   const doneList = lists.value.filter(el => el.id === id)[0]
@@ -99,6 +124,10 @@ const handleRemoveList = (id) => {
 .list-tag {
   padding: 0 var(--space-sm);
   color: #2B45D9;
+  font-size: 14px;
+}
+.list-dt {
+  color: #333;
   font-size: 14px;
 }
 </style>

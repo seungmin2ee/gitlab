@@ -7,7 +7,7 @@
         <div v-for="tag in selectTags" :key="tag.tag_id" class="tag"># {{ tag.desc }}</div>
       </div>
       <div ref="root" class="lists">
-        <List v-for="list in lists" :key="list.id" :list="list.desc" :id="list.id" :tagId="list.tag.id" :done="list.done" :btnState="true"/>
+        <List v-for="list in lists" :key="list.id" :listDt="list.regDt" :list="list.desc" :id="list.id" :tagId="list.tag.id" :done="list.done" :btnState="true"/>
         <InfiniteLoading @infinite="loadTodoData" :target="root" />
       </div>
     </div>
