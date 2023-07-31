@@ -1,24 +1,29 @@
 <template>
-  <button class="archive-btn" @click="showModal">Archive</button>    
-  <div class="todo">
+  <div>
     <div>
-      <input type="text" placeholder="Todo 입력 후 엔터" v-model="inputValue" @keyup.enter="handleAddList" >
-      <div class="tag-box">
-        <div v-for="tag in selectTags" :key="tag.tag_id" class="tag"># {{ tag.desc }}</div>
-      </div>
-      <div ref="root" class="lists">
-        <List v-for="list in lists" :key="list.id" :listDt="list.regDt" :list="list.desc" :id="list.id" :tagId="list.tag.id" :done="list.done" :btnState="true"/>
-        <InfiniteLoading @infinite="loadTodoData" :target="root" />
-      </div>
-    </div>
-    <div>
-      <div>할일에 추가할 태그를 아래에서 선택해주세요. (1개 선택)</div>
-      <div class="tags">
-        <div class="tag" :class="{active: selectTags[0]?.tag_id === tag.tag_id}" v-for="tag in tags" :key="tag.tag_id" @click="handleSelectTag(tag)">
-          <div># {{ tag.desc }}</div>
+      <button class="archive-btn" @click="showModal">Archive</button>    
+      <div class="todo">
+        <div>
+          <input type="text" placeholder="Todo 입력 후 엔터" v-model="inputValue" @keyup.enter="handleAddList" >
+          <div class="tag-box">
+            <div v-for="tag in selectTags" :key="tag.tag_id" class="tag"># {{ tag.desc }}</div>
+          </div>
+          <div ref="root" class="lists">
+            <List v-for="list in lists" :key="list.id" :listDt="list.regDt" :list="list.desc" :id="list.id" :tagId="list.tag.id" :done="list.done" :btnState="true"/>
+            <InfiniteLoading @infinite="loadTodoData" :target="root" />
+          </div>
+        </div>
+        <div>
+          <div>할일에 추가할 태그를 아래에서 선택해주세요. (1개 선택)</div>
+          <div class="tags">
+            <div class="tag" :class="{active: selectTags[0]?.tag_id === tag.tag_id}" v-for="tag in tags" :key="tag.tag_id" @click="handleSelectTag(tag)">
+              <div># {{ tag.desc }}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+    <Modal v-if="modalState"/>
   </div>
 </template>
 
@@ -28,7 +33,8 @@ import axios from 'axios'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import { useListStore, useTagStore, useModalStore } from '../store'
-import List from './List.vue'
+import List from '../components/List.vue'
+import Modal from '../components/Modal.vue'
 
 const store = useListStore()
 const tagStore = useTagStore()
@@ -38,6 +44,7 @@ const { setTag } = tagStore
 const { showModal } = modalStore
 const { lists } = storeToRefs(store)
 const { tags } = storeToRefs(tagStore)
+const { modalState } = storeToRefs(modalStore)
 
 console.log(lists)
 
@@ -63,20 +70,6 @@ const loadTodoData = async ($state) => {
     $state.error()
   }
 }
-
-// const getTodoData = async () => {
-//   page = 1
-
-//   try{
-//     const { data } = await axios('todo/list', {limit: 10, page: page})
-
-//     setList(data.results)
-
-//     page++
-//   } catch(error) {
-//     console.log(error)
-//   }
-// }
 
 const getTagData = async () => {
   try{

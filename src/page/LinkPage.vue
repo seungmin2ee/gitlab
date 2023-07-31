@@ -5,7 +5,6 @@
 </template>
 
 <script setup>
-import { links } from '../assets/data.js'
 import axios from 'axios'
 import * as echarts from 'echarts'
 import { onMounted, ref } from 'vue'
@@ -16,10 +15,6 @@ const getLinkData = async () => {
   const { data } = await axios('node/link')
 
   linkData.value = data.contents
-
-  // linkData.value = links
-
-  console.log(linkData.value)
 }
 
 let chartEl

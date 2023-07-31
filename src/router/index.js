@@ -1,23 +1,25 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Todo from '../components/Todo.vue'
-import Link from '../components/Link.vue'
-import Tags from '../components/Tags.vue'
+import MainLayout from '../layout/MainLayout.vue'
+import { Todo, Link, Tag } from '../page'
 
 const routes = [
   {
     path: '/',
-    name: 'todo',
-    component: Todo,
-  },
-  {
-    path: '/link',
-    name: 'Link',
-    component: Link,
-  },
-  {
-    path: '/tags',
-    name: 'Tags',
-    component: Tags,
+    component: MainLayout,
+    children: [
+      {
+        path: '',
+        component: Todo,
+      },
+      {
+        path: 'link',
+        component: Link,
+      },
+      {
+        path: 'tag',
+        component: Tag,
+      },
+    ],
   },
 ]
 

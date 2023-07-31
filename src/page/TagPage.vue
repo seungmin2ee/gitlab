@@ -12,7 +12,7 @@ import axios from 'axios'
 import { ref } from 'vue'
 import { useTagStore } from '../store'
 import { storeToRefs } from 'pinia'
-import Tag from './Tag.vue'
+import Tag from '../components/Tag.vue'
 
 const inputValue = ref('')
 const store = useTagStore()
