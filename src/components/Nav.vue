@@ -2,13 +2,11 @@
   <nav class="column col-2">
     <router-link to="/">Todo</router-link>
     <router-link to="/link">Link</router-link>
-    <router-link to="/Tags">Tags</router-link>
+    <router-link to="/tag">Tags</router-link>
   </nav>
 </template>
 
-<script setup>
-
-</script>
+<script setup></script>
 
 <style scoped>
 nav {

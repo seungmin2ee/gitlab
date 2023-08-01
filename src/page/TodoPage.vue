@@ -37,20 +37,17 @@ import List from '../components/List.vue'
 import Modal from '../components/Modal.vue'
 
 const store = useListStore()
-const tagStore = useTagStore()
-const modalStore = useModalStore()
 const { setList, addList } = store
-const { setTag } = tagStore
-const { showModal } = modalStore
 const { lists } = storeToRefs(store)
+const tagStore = useTagStore()
+const { setTag } = tagStore
 const { tags } = storeToRefs(tagStore)
+const modalStore = useModalStore()
+const { showModal } = modalStore
 const { modalState } = storeToRefs(modalStore)
-
-console.log(lists)
-
-const root = ref(null)
 const inputValue = ref('')
 const selectTags = ref([])
+const root = ref(null)
 
 let page = 1
 const loadTodoData = async ($state) => {
